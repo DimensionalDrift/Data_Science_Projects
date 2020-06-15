@@ -1,16 +1,8 @@
-import os
-import sys
 import time
 import json
-from datetime import datetime
-from datetime import timedelta
 
 import pandas as pd
 import numpy as np
-from tabulate import tabulate
-
-import glob
-import pickle
 
 import dash
 import dash_core_components as dcc
@@ -73,7 +65,7 @@ def noDataGraph():
 
 
 def dataframeLoader(online, local):
-    # Load data from corona virus database
+    """Load data from corona virus database or fallback to a local dataset"""
     try:
         # Try load the data directly from the virus database
         df = pd.read_csv(local)
@@ -163,7 +155,7 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                # Col - width 4
+                # Col - width 12 mobile, width 4 desktop
                 dbc.Col(
                     [
                         # Total Stats Card
@@ -226,11 +218,10 @@ app.layout = html.Div(
                             className="mt-3 ml-3",
                         ),
                     ],
-                    # width=12,
                     md=12,
                     lg=4,
                 ),
-                # Col - width 8
+                # Col - width 12 mobile, width 8 desktop
                 dbc.Col(
                     [
                         dbc.Row(
@@ -264,8 +255,7 @@ app.layout = html.Div(
                                             className="mt-3 ml-3 ml-lg-0",
                                         ),
                                     ],
-                                    md=6,
-                                    lg=6,
+                                    width=6,
                                     className="px-lg-0",
                                 ),
                                 # Col - width 6
@@ -311,8 +301,7 @@ app.layout = html.Div(
                                             className="mt-3 ml-3",
                                         ),
                                     ],
-                                    md=6,
-                                    lg=6,
+                                    width=6,
                                     className="pl-lg-0",
                                 ),
                                 # Col - width 12
@@ -360,7 +349,6 @@ app.layout = html.Div(
                             ]
                         ),
                     ],
-                    # xs=12,
                     md=12,
                     lg=8,
                 ),
@@ -488,6 +476,7 @@ def update_map_figure(slider, dropdown):
             title="Proportional Covid Cases", margin=dict(l=0, r=0, t=50, b=50)
         )
 
+    # Depricated plot
     elif dropdown == "proportional2":
         fig = px.choropleth_mapbox(
             df_slice,
@@ -512,8 +501,13 @@ def update_map_figure(slider, dropdown):
     Output("irl-totals", "figure"), [dash.dependencies.Input("total-dropdown", "value")]
 )
 def update_total_figure(dropdown):
-
+    """
+    Function to build and return the total figure
+    """
     def datesplit(date):
+        """return 'mm/dd' from 'yyyy/mm/dd hh:mm:ss+00' provided by the dataset"""
+
+        # X This is not futureproof, change the replacing of the current year more robust
         return date.split(" ")[0].replace("2020/", "")
 
     df_ireland["Date"] = df_ireland["Date"].apply(datesplit)
@@ -529,7 +523,6 @@ def update_total_figure(dropdown):
         fig.update_layout(title="Total Covid Cases", margin=dict(l=0, r=0, t=50, b=50))
 
     elif dropdown == "daily":
-
         fig = go.Figure(
             data=go.Scatter(
                 x=df_ireland["Date"],
@@ -547,6 +540,7 @@ def update_total_figure(dropdown):
             )
         )
         fig.update_layout(title="Daily Covid Cases", margin=dict(l=0, r=0, t=50, b=50))
+
     elif dropdown == "active":
         fig = go.Figure(
             go.Scatter(
@@ -572,7 +566,9 @@ def update_total_figure(dropdown):
     ],
 )
 def update_breakdown_figure(dropdown, slider):
-
+    """
+    Function to build and return the breakdown figure
+    """
     df_ireland_slice = df_ireland[
         df_ireland["Date"].str.contains(unixToDatetime(slider).strftime("%m/%d"))
     ]
@@ -581,6 +577,7 @@ def update_breakdown_figure(dropdown, slider):
     if len(df_ireland_slice) < 1:
         fig = noDataGraph()
 
+    # Otherwise return a graph object
     else:
         if dropdown == "transmission":
             data = [
