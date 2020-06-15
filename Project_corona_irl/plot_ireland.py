@@ -1,32 +1,6 @@
-import os
-import sys
-import time
 import json
-from datetime import datetime
-from datetime import timedelta
-
 import pandas as pd
-import numpy as np
-from tabulate import tabulate
-
-import glob
-import pickle
-
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
-import dash_bootstrap_components as dbc
-
 import plotly.express as px
-
-
-# Example dataframe and geojson
-# df = px.data.election()
-# geojson = px.data.election_geojson()
-
-# print(geojson["features"][0])
-# print(df)
 
 # Load geojson from file, downloaded from:
 # https://gist.github.com/eoiny/2183412
@@ -48,10 +22,10 @@ print(df[0:26])
 fig = px.choropleth_mapbox(
     df[0:26],
     geojson=geojson,
-    color="PopulationCensus16", # Data to be plotted
-    locations="CountyName", # Dataframe entry to match to geojson
-    featureidkey="properties.county", # GeoJSON entry to match to dataframe
-    center={"lat": 53.5, "lon": -8.5}, # Center map display
+    color="PopulationCensus16",  # Data to be plotted
+    locations="CountyName",  # Dataframe entry to match to geojson
+    featureidkey="properties.county",  # GeoJSON entry to match to dataframe
+    center={"lat": 53.5, "lon": -8.5},  # Center map display
     mapbox_style="carto-positron",
     zoom=6,
 )
