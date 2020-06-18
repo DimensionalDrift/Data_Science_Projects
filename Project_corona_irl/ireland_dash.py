@@ -68,7 +68,8 @@ def dataframeLoader(online, local):
     """Load data from corona virus database or fallback to a local dataset"""
     try:
         # Try load the data directly from the virus database
-        df = pd.read_csv(local)
+        print("Loading from url: %s" % online)
+        df = pd.read_csv(online)
     except:
         # If it fails to load then load the data from an archived copy
         # of the database
