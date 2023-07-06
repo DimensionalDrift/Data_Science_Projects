@@ -8,5 +8,5 @@ dash_html_components==1.0.3
 pandas==1.0.4
 plotly==4.8.1
 python-dotenv==0.13.0
-scipy==1.4.1
+scipy==1.10.0
 tabulate==0.8.7
